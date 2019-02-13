@@ -2,8 +2,8 @@
 /*
 Plugin Name: BYMF Image Copyright Shortcode
 Plugin URI: http://www.bytemanufaktur.at
-Description: Adds a shortcode to get the copyright information of a featured image of a page/post
-Version: 1.0
+Description: Adds a shortcode to get the copyright information of a featured image of a page/post, adds shortcode for advanced slider
+Version: 1.1
 Author: Paul Csokay - bytemanufaktur
 Author URI: http://www.bytemanufaktur.at
 License: GPL2
@@ -22,7 +22,7 @@ function bymf_imgcopyright_init() {
 			$meta = get_metadata( 'post', $imageID, '_avia_attachment_copyright', true );
 
 			if ( $meta ) {
-				$content .= esc_html($meta);
+				$content .= esc_html( $meta );
 			}
 		}
 
@@ -31,7 +31,33 @@ function bymf_imgcopyright_init() {
 
 	}
 
+	// Add Shortcode
+	function bymf_getslidercopyright( $atts = [], $content = null ) {
+		$a = shortcode_atts( array(
+			'id' => 0
+
+		), $atts );
+
+		$postid = $a['id'];
+
+		if ( 0 == $postid ) {
+			$postid = get_the_ID();
+		}
+
+		$imageID = get_post_thumbnail_id( $postid );
+
+		$meta = get_metadata( 'post', $imageID, '_avia_attachment_copyright', true );
+
+		if ( $meta ) {
+			$content = esc_html( $meta );
+		}
+
+		return $content;
+
+	}
+
 	add_shortcode( 'bymf_imgcopyright', 'bymf_getimgcopyright' );
+	add_shortcode( 'bymf_slidecopyright', 'bymf_getslidercopyright' );
 }
 
 add_action( 'init', 'bymf_imgcopyright_init' );
